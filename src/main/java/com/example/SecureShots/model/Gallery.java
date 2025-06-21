@@ -16,13 +16,14 @@ public class Gallery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    private String password; // encrypted
+    private String title;
+    private String description;
+    private String accessPassword;
 
     @ManyToOne
-    private User createdBy;
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
-    @OneToMany(mappedBy = "gallery", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "gallery", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos;
 }

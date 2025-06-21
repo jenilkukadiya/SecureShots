@@ -15,8 +15,9 @@ public class Photo {
     private Long id;
 
     private String fileName;
-    private String s3Url;
+    private String url;
 
     @ManyToOne
+    @JoinColumn(name = "gallery_id")
     private Gallery gallery;
 }

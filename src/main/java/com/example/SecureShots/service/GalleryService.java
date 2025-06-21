@@ -7,44 +7,43 @@ import com.example.SecureShots.model.User;
 import com.example.SecureShots.repository.GalleryRepository;
 import com.example.SecureShots.repository.PhotoRepository;
 import com.example.SecureShots.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class GalleryService {
 
-    private final GalleryRepository galleryRepository;
-    private final PhotoRepository photoRepository;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private GalleryRepository galleryRepository;
 
-    public Gallery createGallery(String email, GalleryDTO dto) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    @Autowired
+    private UserRepository userRepository;
 
-        Gallery gallery = Gallery.builder()
-                .name(dto.getName())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .createdBy(user)
-                .build();
+    @Autowired
+    private PhotoRepository photoRepository;
 
+    public Gallery createGallery(Gallery gallery, String email) {
+        User owner = userRepository.findByEmail(email).orElseThrow();
+        gallery.setOwner(owner);
         return galleryRepository.save(gallery);
     }
 
-    public List<Photo> getPhotos(Long galleryId, String password) {
-        Gallery gallery = galleryRepository.findById(galleryId)
-                .orElseThrow(() -> new RuntimeException("Gallery not found"));
-
-        if (!passwordEncoder.matches(password, gallery.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return photoRepository.findByGalleryId(galleryId);
+    public void addPhotoToGallery(Long galleryId, Photo photo) {
+        Gallery gallery = galleryRepository.findById(galleryId).orElseThrow();
+        photo.setGallery(gallery);
+        photoRepository.save(photo);
     }
 
-    // Add upload logic later with AWS S3
+    public Optional<GalleryDTO> getPublicGallery(Long galleryId, String password) {
+        Optional<Gallery> galleryOpt = galleryRepository.findByIdAndAccessPassword(galleryId, password);
+        return galleryOpt.map(gallery -> new GalleryDTO(
+                gallery.getId(),
+                gallery.getTitle(),
+                gallery.getDescription(),
+                gallery.getPhotos().stream().map(Photo::getUrl).collect(Collectors.toList())
+        ));
+    }
 }
