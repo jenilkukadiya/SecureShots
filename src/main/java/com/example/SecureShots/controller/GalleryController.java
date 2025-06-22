@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -23,11 +25,21 @@ public class GalleryController {
         return ResponseEntity.ok(galleryService.createGallery(gallery, auth.getName()));
     }
 
+//    @PostMapping("/{galleryId}/photo")
+//    public ResponseEntity<Void> addPhoto(@PathVariable Long galleryId, @RequestBody Photo photo) {
+//        galleryService.addPhotoToGallery(galleryId, photo);
+//        return ResponseEntity.ok().build();
+//    }
+
     @PostMapping("/{galleryId}/photo")
-    public ResponseEntity<Void> addPhoto(@PathVariable Long galleryId, @RequestBody Photo photo) {
-        galleryService.addPhotoToGallery(galleryId, photo);
+    public ResponseEntity<Void> addPhoto(@PathVariable Long galleryId,
+                                         @RequestParam("file") MultipartFile file) throws IOException {
+        galleryService.addPhotoToGallery(galleryId, file);  // Let service handle upload and saving
         return ResponseEntity.ok().build();
     }
+
+
+
 
     @GetMapping("/public/{galleryId}")
     public ResponseEntity<GalleryDTO> getGallery(@PathVariable Long galleryId, @RequestParam String password) {

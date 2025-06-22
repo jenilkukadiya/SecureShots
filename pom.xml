@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -97,6 +97,12 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.37.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>s3</artifactId>
 		</dependency>
@@ -116,24 +122,24 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-<!--			&lt;!&ndash; Add this Lombok annotation processor plugin &ndash;&gt;-->
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-compiler-plugin</artifactId>-->
-<!--				<version>3.11.0</version>-->
-<!--				<configuration>-->
-<!--					<annotationProcessorPaths>-->
-<!--						<path>-->
-<!--							<groupId>org.projectlombok</groupId>-->
-<!--							<artifactId>lombok</artifactId>-->
-<!--							<version>1.18.36</version>-->
-<!--						</path>-->
-<!--					</annotationProcessorPaths>-->
-<!--					<compilerArgs>-->
-<!--						<arg>-parameters</arg>-->
-<!--					</compilerArgs>-->
-<!--				</configuration>-->
-<!--			</plugin>-->
+			<!--			&lt;!&ndash; Add this Lombok annotation processor plugin &ndash;&gt;-->
+			<!--			<plugin>-->
+			<!--				<groupId>org.apache.maven.plugins</groupId>-->
+			<!--				<artifactId>maven-compiler-plugin</artifactId>-->
+			<!--				<version>3.11.0</version>-->
+			<!--				<configuration>-->
+			<!--					<annotationProcessorPaths>-->
+			<!--						<path>-->
+			<!--							<groupId>org.projectlombok</groupId>-->
+			<!--							<artifactId>lombok</artifactId>-->
+			<!--							<version>1.18.36</version>-->
+			<!--						</path>-->
+			<!--					</annotationProcessorPaths>-->
+			<!--					<compilerArgs>-->
+			<!--						<arg>-parameters</arg>-->
+			<!--					</compilerArgs>-->
+			<!--				</configuration>-->
+			<!--			</plugin>-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

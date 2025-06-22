@@ -9,7 +9,9 @@ import com.example.SecureShots.repository.PhotoRepository;
 import com.example.SecureShots.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,17 +27,55 @@ public class GalleryService {
     @Autowired
     private PhotoRepository photoRepository;
 
+    @Autowired
+    private S3Service s3Service;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     public Gallery createGallery(Gallery gallery, String email) {
         User owner = userRepository.findByEmail(email).orElseThrow();
         gallery.setOwner(owner);
         return galleryRepository.save(gallery);
     }
 
-    public void addPhotoToGallery(Long galleryId, Photo photo) {
-        Gallery gallery = galleryRepository.findById(galleryId).orElseThrow();
-        photo.setGallery(gallery);
+//    public void addPhotoToGallery(Long galleryId, Photo photo) {
+//        Gallery gallery = galleryRepository.findById(galleryId).orElseThrow();
+//        photo.setGallery(gallery);
+//        photoRepository.save(photo);
+//    }
+
+//    public void addPhotoToGallery(Long galleryId, MultipartFile file) throws IOException {
+//        Gallery gallery = galleryRepository.findById(galleryId)
+//                .orElseThrow(() -> new RuntimeException("Gallery not found"));
+//
+//        String s3Url = s3Service.uploadFile(file);
+//
+//        Photo photo = Photo.builder()
+//                .fileName(file.getOriginalFilename())
+//                .url(s3Url)
+//                .gallery(gallery)
+//                .build();
+//
+//        photoRepository.save(photo);
+//    }
+
+
+    public void addPhotoToGallery(Long galleryId, MultipartFile file) throws IOException {
+        Gallery gallery = galleryRepository.findById(galleryId)
+                .orElseThrow(() -> new RuntimeException("Gallery not found"));
+
+        String url = cloudinaryService.uploadFile(file);  // use Cloudinary now
+
+        Photo photo = Photo.builder()
+                .fileName(file.getOriginalFilename())
+                .url(url)
+                .gallery(gallery)
+                .build();
+
         photoRepository.save(photo);
     }
+
 
     public Optional<GalleryDTO> getPublicGallery(Long galleryId, String password) {
         Optional<Gallery> galleryOpt = galleryRepository.findByIdAndAccessPassword(galleryId, password);
