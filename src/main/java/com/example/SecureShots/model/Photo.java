@@ -15,7 +15,9 @@ public class Photo {
     private Long id;
 
     private String fileName;
-    private String url;
+
+    // ✅ Change this from 'url' to 'publicId'
+    private String publicId;
 
     @ManyToOne
     @JoinColumn(name = "gallery_id")

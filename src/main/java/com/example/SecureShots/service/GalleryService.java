@@ -65,17 +65,16 @@ public class GalleryService {
         Gallery gallery = galleryRepository.findById(galleryId)
                 .orElseThrow(() -> new RuntimeException("Gallery not found"));
 
-        String url = cloudinaryService.uploadFile(file);  // use Cloudinary now
+        String publicId = cloudinaryService.uploadFile(file);  // Save public ID instead of full URL
 
         Photo photo = Photo.builder()
                 .fileName(file.getOriginalFilename())
-                .url(url)
+                .publicId(publicId)  // storing publicId
                 .gallery(gallery)
                 .build();
 
         photoRepository.save(photo);
     }
-
 
     public Optional<GalleryDTO> getPublicGallery(Long galleryId, String password) {
         Optional<Gallery> galleryOpt = galleryRepository.findByIdAndAccessPassword(galleryId, password);
@@ -83,7 +82,10 @@ public class GalleryService {
                 gallery.getId(),
                 gallery.getTitle(),
                 gallery.getDescription(),
-                gallery.getPhotos().stream().map(Photo::getUrl).collect(Collectors.toList())
+                gallery.getPhotos().stream()
+                        .map(photo -> cloudinaryService.generateSecureUrl(photo.getPublicId())) // signed URL
+                        .collect(Collectors.toList())
         ));
     }
+
 }

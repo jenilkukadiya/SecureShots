@@ -16,7 +16,24 @@ public class CloudinaryService {
     private Cloudinary cloudinary;
 
     public String uploadFile(MultipartFile file) throws IOException {
-        Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        return uploadResult.get("secure_url").toString();
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap(
+                        "type", "authenticated",  // 👈 set delivery type to authenticated
+                        "resource_type", "image"
+                )
+        );
+
+        // Save only the public ID (not URL) for future secure access
+        return uploadResult.get("public_id").toString();
+    }
+
+    public String generateSecureUrl(String publicId) {
+        return cloudinary.url()
+                .signed(true)
+                .type("authenticated")
+                .secure(true)
+                .generate(publicId);
     }
 }
+
