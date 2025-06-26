@@ -41,9 +41,19 @@ public class AuthService implements UserDetailsService {
 
 
     public User registerUser(SignupRequest request) {
+
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Passwords do not match");
+        }
+
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("User already exists");
+        }
+
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .fullName(request.getFullName())
                 .build();
         return userRepository.save(user);
     }
