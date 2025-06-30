@@ -13,11 +13,14 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Allow all paths
-                        .allowedOrigins("http://localhost:3000", "https://secureshots.com") // React app URL or frontend domain
+                registry.addMapping("/**") // Allow all API paths
+                        .allowedOrigins(
+                                "http://localhost:3000", // local dev
+                                "https://radiant-belekoy-38d6a2.netlify.app" // Netlify prod
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // Only if using cookies or session
+                        .allowCredentials(true); // Only if your frontend uses cookies/auth headers
             }
         };
     }
