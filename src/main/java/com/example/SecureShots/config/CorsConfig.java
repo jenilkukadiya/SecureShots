@@ -19,9 +19,8 @@ public class CorsConfig {
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(false); // Set to false for cross-origin
+                        .allowCredentials(true); // ✅ must be true when sending Authorization header
             }
         };
     }
 }
-
